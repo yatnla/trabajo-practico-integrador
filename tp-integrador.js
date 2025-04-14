@@ -145,7 +145,7 @@ const agregarLibro = (id, título, autor, año, género) => {
     libros.push(nuevoLibro);
 }
 
-console.log(agregarLibro(11, 'The Eyes Are the Best Part', 'Monika Kim', 2024, 'Horror'));
+agregarLibro(11, 'The Eyes Are the Best Part', 'Monika Kim', 2024, 'Horror');
 console.log(libros);
 
 // B. Crear una función buscarLibro(criterio, valor) que permita buscar libros por título, autor o género utilizando el algoritmo de búsqueda lineal. 
@@ -174,8 +174,9 @@ const ordenarLibros = (criterio) => {
                 : libros[j].año > libros[j + 1].año; // si el criterio es año, compara numéricamente.
 
             if (debeIntercambiar) {
-                 // si es true, se hace el swap de los dos libros. intercambio de dos elementos hacia la izquierda/derecha respectivamente en el length del array según la condición de ↑.
+                 // si es true, se hace el swap de los dos libros.
                 [libros[j], libros[j + 1]] = [libros[j + 1], libros[j]];
+                // intercambio de dos elementos hacia la izquierda/derecha respectivamente en el length del array según la condición de ↑.
             }
         }
     }
@@ -205,11 +206,52 @@ console.log(libros);
 
 // A. Implementar una función registrarUsuario(nombre, email) que agregue un nuevo usuario al array usuarios. 
 
-// B. Implementar una función mostrarTodosLosUsuarios() que me devuelva el array completo de usuarios
+const registrarUsuario = (nombre, email) => {
+    const nuevoUsuario = {
+        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1,
+        nombre: nombre,
+        email: email,
+        librosPrestados: []
+    };
+
+    usuarios.push(nuevoUsuario);
+}
+
+registrarUsuario('Ryuichi', 'sakamoto.ryuichi@proton.me');
+
+// B. Implementar una función mostrarTodosLosUsuarios() que me devuelva el array completo de usuarios.
+
+const mostrarTodosLosUsuarios = () => {
+    usuarios.forEach(usuario => {
+        console.log(`ID: ${usuario.id}, Nombre: ${usuario.nombre}, Email: ${usuario.email}, Libros prestados: ${usuario.librosPrestados}`);
+    });
+}
+
+mostrarTodosLosUsuarios();
 
 // C. Crear una función buscarUsuario(email) que devuelva la información de un usuario dado su email.
 
+const buscarUsuario = (email) => {
+    const usuario = usuarios.find(usuario => usuario.email === email);
+    return `El usuario buscado cuenta con la siguiente información:
+    
+    • ID: ${usuario.id}
+    • Nombre: ${usuario.nombre}
+    • Email: ${usuario.email}
+    • Libros prestados: ${usuario.librosPrestados}`;
+};
+
+console.log(buscarUsuario('watanabe.yuki@proton.me'));
+
 // D. Implementar una función borrarUsuario(nombre, email) que elimine el usuario seleccionado.
+
+const borrarUsuario = (nombre, email) => {
+    usuarios = usuarios.filter(usuario => usuario.nombre !== nombre || usuario.email !== email);
+    console.log(`Usuario con nombre ${nombre} y ${email} eliminado.`);
+};
+
+borrarUsuario('Akira','takahashi.akira@proton.me');
+console.log(usuarios);
 
 // ———
 
@@ -217,8 +259,46 @@ console.log(libros);
 
 // A. Desarrollar una función prestarLibro(idLibro, idUsuario) que marque un libro como no disponible y lo agregue a la lista de libros prestados del usuario. Luego mostrar que libro se prestó y a que usuario.
 
+const prestarLibro = (idLibro, idUsuario) => {
+    const libroAPrestar = libros.find(libro => libro.id === idLibro); // búsqueda del libro.
+
+    const usuarioPrestador = usuarios.find(usuario => usuario.id === idUsuario); // búsqueda del usuario.
+
+    if (!libroAPrestar.disponible) {
+        console.log(`Error: El libro '${libroAPrestar.título}' (ID: ${idLibro}) no está disponible actualmente.`); // verifica si el libro está disponible.
+        return;
+    }
+
+    libroAPrestar.disponible = false; // luego, lo cataloga como no disponible y lo agrega a la propiedad librosPrestados del usuario.
+    usuarioPrestador.librosPrestados.push(idLibro); 
+
+    console.log(`Libro prestado: '${libroAPrestar.título}' (ID: ${idLibro})`);
+    console.log(`Prestado a: ${usuarioPrestador.nombre} (ID: ${idUsuario})`);
+};
+
+prestarLibro(9,1);
+console.log(usuarios);
+
 // B. Implementar una función devolverLibro(idLibro, idUsuario) que marque un libro como disponible y lo elimine de la lista de libros prestados del usuario.
 
+const devolverLibro = (idLibro, idUsuario) => {
+    const libroADevolver = libros.find(libro => libro.id === idLibro);
+    const usuarioDevolvedor = usuarios.find(usuario => usuario.id === idUsuario);
+
+    const indexLibro = usuarioDevolvedor.librosPrestados.indexOf(idLibro);
+    if (indexLibro === -1) { // si el index es -1, implica que el libro no está prestado al usuario.
+        console.log(`Error: El libro '${libroADevolver.título}' (ID: ${idLibro}) no está prestado a ${usuarioDevolvedor.nombre}.`);
+        return;
+    }
+
+    libroADevolver.disponible = true; // si el index no es -1, lo cataloga como disponible nuevamente.
+    usuarioDevolvedor.librosPrestados.splice(indexLibro, 1); // y lo elimina de su propiedad de usuario.
+
+    console.log(`Libro devuelto: '${libroADevolver.título}' (ID: ${idLibro})`);
+    console.log(`Devuelto por: ${usuarioDevolvedor.nombre} (ID: ${idUsuario})`);
+};
+
+devolverLibro(9,1);
 // ———
 
 // PUNTO 5. REPORTES
