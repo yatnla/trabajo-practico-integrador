@@ -1,0 +1,23 @@
+{
+  "name": "trabajopracticointegrador",
+  "version": "1.0.0",
+  "main": "tp-integrador.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yatnla/trabajo-practico-integrador.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yatnla/trabajo-practico-integrador/issues"
+  },
+  "homepage": "https://github.com/yatnla/trabajo-practico-integrador#readme",
+  "description": "",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
+}
