@@ -15,7 +15,7 @@ let libros = [
         autor: 'Sayaka Murata',
         año: 2018,
         género: 'Ficción',
-        disponible: true
+        disponible: true // contempla si el libro está disponible para préstamo (true).
     },
     {
         id: 2,
@@ -23,7 +23,7 @@ let libros = [
         autor: 'Mieko Kawakami',
         año: 2009,
         género: 'Ficción',
-        disponible: true
+        disponible: true 
     },
     {
         id: 3,
@@ -68,7 +68,7 @@ let libros = [
     {
         id: 8,
         título: 'Monstrilio',
-        autor: 'Gerardo Sámano Córdova',
+        autor: ' Gerardo Sámano Córdova ',
         año: 2023,
         género: 'Horror',
         disponible: true
@@ -76,7 +76,7 @@ let libros = [
     {
         id: 9,
         título: 'Motherthing',
-        autor: 'Ainslie Hogarth',
+        autor: ' Ainslie Hogarth ',
         año: 2022,
         género: 'Horror',
         disponible: true
@@ -208,7 +208,7 @@ console.log(libros);
 
 const registrarUsuario = (nombre, email) => {
     const nuevoUsuario = {
-        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1,
+        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1, // asignación del ID --> si hay usuarios, toma el ID del último user y le suma 1; si no, empieza en 1.
         nombre: nombre,
         email: email,
         librosPrestados: []
@@ -246,7 +246,7 @@ console.log(buscarUsuario('watanabe.yuki@proton.me'));
 // D. Implementar una función borrarUsuario(nombre, email) que elimine el usuario seleccionado.
 
 const borrarUsuario = (nombre, email) => {
-    usuarios = usuarios.filter(usuario => usuario.nombre !== nombre || usuario.email !== email);
+    usuarios = usuarios.filter(usuario => usuario.nombre !== nombre || usuario.email !== email); // se filtra el array para eliminar el usuario que coincide con el email y nombre proporcionados.
     console.log(`Usuario con nombre ${nombre} y ${email} eliminado.`);
 };
 
@@ -303,36 +303,138 @@ devolverLibro(9,1);
 
 // PUNTO 5. REPORTES
 
-// A. Crear una función generarReporteLibros() que utilice métodos avanzados de arrays (.map(), .filter(), .reduce()) para generar un reporte con la siguiente información:
-// Cantidad total de libros.
-// Cantidad de libros prestados.
-// Cantidad de libros por género.
-// Libro más antiguo y más nuevo
+// Crear una función generarReporteLibros() que utilice métodos avanzados de arrays (.map(), .filter(), .reduce()) para generar un reporte.
+
+const generarReporteLibros = () => {
+    
+    // A. Cantidad total de libros.
+    const librosTotales = libros.length;
+
+
+    // B. Cantidad de libros prestados.
+    const librosPrestados = libros.filter(libro => !libro.disponible); // se analiza la propiedad booleana para filtrar los libros que no están disponibles.
+
+    // C. Cantidad de libros por género.
+
+    const librosPorGénero = libros.reduce((acumulador, libro) => {
+        const género = libro.género;
+        if (!acumulador[género]) {
+            acumulador[género] = 1; // si el género no está en el acumulador, se inicia en 1.
+            } else {
+                acumulador[género]++;
+                } // si está, se incrementa el contador.
+                return acumulador;
+            }, {});
+
+    // D. Libro más antiguo y más nuevo.
+
+    const libroMasAntiguo = libros.reduce((libroAntiguo, libroActual) => {
+        return libroAntiguo.año < libroActual.año ? libroAntiguo : libroActual;
+    });
+    
+    const libroMasNuevo = libros.reduce((libroAntiguo, libroActual) => {
+        return libroAntiguo.año > libroActual.año ? libroAntiguo : libroActual;
+    });
+
+    const reporte = `Total de libros: ${librosTotales}.
+        Libros prestados: ${librosPrestados.length}.
+        Libros por género: ${JSON.stringify(librosPorGénero)}. // conversión de objeto de string.
+        Libro más antiguo: ${libroMasAntiguo.título}.
+        Libro más nuevo: ${libroMasNuevo.título}.`;
+    
+    return reporte;
+};
+
+console.log(generarReporteLibros()); 
 
 // ———
 
 // PUNTO 6. IDENTIFICACIÓN AVANZADA DE LIBROS
 
-// A. Implementar una función librosConPalabrasEnTitulo() que identifique y muestre los títulos de los libros que contienen más de una palabra. Además la función debe excluir aquellos títulos que contengan números y/o caracteres especiales. Por último mostrar en la consola el array resultante. 
+// A. Implementar una función librosConPalabrasEnTitulo() que identifique y muestre los títulos de los libros que contienen más de una palabra. Además la función debe excluir aquellos títulos que contengan números y/o caracteres especiales. Por último mostrar en la consola el array resultante.
 
+const librosConPalabrasEnTitulo = () => {
+    const librosFiltrados = libros.filter(libro => {
+        const tieneMasDeUnaPalabra = libro.título.split(' ').length > 1; // verificación si el título tiene más de una palabra.
+
+        const tieneCaracteresEspeciales = /^[A-Za-z\sáéíóúÁÉÍÓÚñÑ]+$/.test(libro.título); // acá verifica si el título no contiene caracteres especiales.
+
+        return tieneMasDeUnaPalabra && tieneCaracteresEspeciales; // si ambas condiciones se cumplen, es true.
+    });
+
+    console.log('Título/s con más de una palabra o que contiene un carácter especial:')
+    console.log(librosFiltrados.map(libro => libro.título));
+};
+
+librosConPalabrasEnTitulo();
 // ———
 
 // PUNTO 7. CÁLCULOS ESTADÍSTICOS
 
-// A. Desarrollar una función calcularEstadisticas() que obtenga información sobre los años de publicación de los libros:
-// Obtener un array con los años de publicación de todos los libros.
-// Calcular el promedio de los años de publicación.
-// Encontrar el año de publicación más frecuente.
-// Calcular la diferencia en años entre el libro más antiguo y el más nuevo. Para este punto es recomendable usar el objeto Math()
+// Desarrollar una función calcularEstadisticas() que obtenga información sobre los años de publicación de los libros:
+
+const calcularEstadisticas = () => {
+
+    // A. Obtener un array con los años de publicación de todos los libros.
+    const añoPublicacion = libros.map(libro => libro.año);
+    console.log(`Array con los años de publicación de todos los libros: ${añoPublicacion}.`); // creación de un array con los años de publicación de los libros --> map().
+
+    // B. Calcular el promedio de los años de publicación.
+    const promedioAños = añoPublicacion.reduce((suma, año) => suma + año, 0) / añoPublicacion.length; // se suman todos los años y después se divide por la cantidad de años para obtener el promedio -> reduce().
+    console.log(`Promedio de los años de publicación: ${promedioAños}.`);
+
+    // C. Encontrar el año de publicación más frecuente.
+    const frecuenciaAños = {};
+    añoPublicacion.forEach(año => {
+        frecuenciaAños[año] = (frecuenciaAños[año] || 0) + 1;
+    }); // se itera sobre el array de los años de publicación y se cuenta cuántas veces aparece cada año.
+
+    const añoMasFrecuente = Object.keys(frecuenciaAños).reduce((añoMax, añoActual) => {
+        return frecuenciaAños[añoActual] > frecuenciaAños[añoMax] ? añoActual : añoMax; // retorna el que cuenta con mayor cantidad.
+    });
+    console.log(`Año de publicación más frecuente: ${añoMasFrecuente}.`);
+
+    // E. Calcular la diferencia en años entre el libro más antiguo y el más nuevo. Para este punto es recomendable usar el objeto Math().
+    const añoMasAntiguo = Math.min(...añoPublicacion);
+    const añoMasNuevo = Math.max(...añoPublicacion);
+    const diferenciaAños = añoMasNuevo - añoMasAntiguo;
+
+    console.log(`Libro más antiguo publicado en: ${añoMasAntiguo}.`);
+    console.log(`Libro más nuevo publicado en: ${añoMasNuevo}.`);
+    console.log(`Diferencia en años entre el más nuevo y el más antiguo: ${diferenciaAños} años.`);
+};
+
+calcularEstadisticas();
 
 // ———
 
 // PUNTO 8. MANEJO DE CADENAS
 
-// A. Crear una función normalizarDatos() que utilice métodos de strings para:
-// Convertir todos los títulos a mayúsculas.
-// Eliminar espacios en blanco al inicio y final de los nombres de autores.
-// Formatear los emails de los usuarios a minúsculas.
+// Crear una función normalizarDatos() que utilice métodos de strings para:
+
+const normalizarDatos = () => {
+
+    // A. Convertir todos los títulos a mayúsculas.
+    libros.forEach(libro => {
+        libro.título = libro.título.toUpperCase();
+    });
+    console.log(`Títulos en mayúsculas: ${libros.map(libro => libro.título)}.`);
+
+    // B. Eliminar espacios en blanco al inicio y final de los nombres de autores.
+    libros.forEach(libro => {
+        libro.autor = libro.autor.trim(); // se elimnan los espacios en blanco al inicio y al final de la propiedad libro.autor --> trim()
+    });
+    console.log(`Autores sin espacios: ${libros.map(libro => libro.autor)}.`);
+
+    // C. Formatear los emails de los usuarios a minúsculas.
+    usuarios.forEach(usuario => {
+        usuario.email = usuario.email.toLowerCase();
+    });
+    console.log(`Emails en minúsculas: ${usuarios.map(usuario => usuario.email)}.`);
+};
+
+normalizarDatos();
+
 
 // ———
 
@@ -340,7 +442,57 @@ devolverLibro(9,1);
 
 // A. Implementar una función menuPrincipal() que muestre un menú de opciones al usuario y permita interactuar con el sistema utilizando prompt().
 
+const prompt = require("prompt-sync")();
+
 // B. El menú debe incluir opciones para todas las funcionalidades implementadas en el proyecto y utilizar estructuras de control (if, switch, ciclos) para manejar la lógica.
+
+const menuPrincipal = () => {
+    let opcion; // se almacena la opción que otorgará el usuario a.k.a prompt.
+    while (true) {
+        opcion = prompt(
+            `Menú principal:
+
+            1. Ver todos los libros.
+            2. Ver todos los usuarios.
+            3. Generar reporte de libros.
+            4. Calcular estadísticas.
+            5. Normalizar datos.
+            0. Salir.
+            
+            Seleccioná una opkción: `);
+
+    // C. Utilizar un switch para manejar las diferentes opciones del usuario ya que hace al código más limpio y claro a la hora de escribirlo.
+        switch (opcion) {
+            case '1':
+                console.log('Todos los libros:');
+                console.log(libros);
+                break;
+            case '2':
+                console.log('Todos los usuarios:');
+                mostrarTodosLosUsuarios();
+                break;
+            case '3':
+                console.log('Reporte de libros:');
+                console.log(generarReporteLibros())
+                break;
+            case '4':
+                console.log('Estadísticas:');
+                calcularEstadisticas();
+                break;
+            case '5':
+                console.log('Normalización de datos:');
+                normalizarDatos();
+                break;
+            case '0':
+                console.log('Fin del programa.');
+                return;
+            default:
+                console.log('Por favor, ingresá una opción válida.');
+        }
+    }
+}
+
+menuPrincipal();
 
 // ———
 
